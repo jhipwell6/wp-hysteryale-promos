@@ -2,14 +2,16 @@
 
 /**
  * Plugin Name: HysterYale Promos Integration
- * Plugin URI: https://hyster-yale.com/
+ * Plugin URI: https://hysteryale.com/
  * Description: WP HysterYale Promos Plugin
  * Version: 0.1
  * Author: WebFX
  * Author URI: https://webfx.com/
- *
+ * GitHub Plugin URI: jhipwell6/wp-hysteryale-promos
+ * Primary Branch: main
  * Text Domain: wp-hyg-promos
  */
+ 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
