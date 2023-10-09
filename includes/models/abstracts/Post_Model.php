@@ -208,7 +208,7 @@ abstract class Post_Model
 
 	public function get_property_keys()
 	{
-		return array_keys( $this->to_[] );
+		return array_keys( $this->to_array() );
 	}
 
 	protected function get_getter( $prop )
@@ -306,7 +306,7 @@ abstract class Post_Model
 			throw new \Exception( 'Invalid post ID returned' );
 		}
 
-		$data = $this->to_[];
+		$data = $this->to_array();
 
 		$instance = new static( $post_id );
 		$instance->set_props( $data );
@@ -612,7 +612,7 @@ abstract class Post_Model
 	public function to_csv_array( $include = [] )
 	{
 		$include = empty( $include ) ? $this->get_property_keys() : $include;
-		$arr = $this->to_[];
+		$arr = $this->to_array();
 		return array_map( function ( $key ) use ( $arr ) {
 			return is_array( $arr[$key] ) ? $this->deep_implode( '|', $arr[$key] ) : (string) $arr[$key];
 		}, $include );
@@ -623,7 +623,7 @@ abstract class Post_Model
 		if ( is_array( $value ) ) {
 			foreach ( $value as $k => $v ) {
 				if ( is_object( $v ) ) {
-					$value[$k] = $v->to_[];
+					$value[$k] = $v->to_array();
 				}
 			}
 		}
