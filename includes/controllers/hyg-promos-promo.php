@@ -13,6 +13,7 @@ class HYG_Promos_Promo
 	{
 		add_action( 'init', [ $this, 'add_promo_expiration_schedule' ], 10 );
 		add_action( 'hyg_promos_expire_promos', [ $this, 'maybe_expire_promos' ], 10 );
+		add_shortcode( 'hyg_promo_embed', [ $this, 'promo_embed_shortcode' ], 10, 1 );
 	}
 
 	public static function instance()
@@ -39,6 +40,16 @@ class HYG_Promos_Promo
 				$Promo->expire();
 			}
 		}
+	}
+	
+	public function promo_embed_shortcode( $atts )
+	{
+		$attributes = shortcode_atts( [
+			'ID' => get_the_ID(),
+		], $atts );
+		
+		$Promo = WP_HYG_Promos()->Promo( $attributes['ID'] );
+		return $Promo->get_embed_code();
 	}
 	
 	private function get_promos_to_expire()
