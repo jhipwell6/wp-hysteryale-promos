@@ -17,7 +17,7 @@ class Post_Types
 			'config' => array(
 				'hierarchical' => true,
 				'has_archive' => false,
-				'publicly_queryable' => false,
+				'publicly_queryable' => true,
 				'supports' => array( 'title', 'editor', 'thumbnail' ),
 				'menu_icon' => 'dashicons-admin-tools',
 			),
