@@ -4,7 +4,7 @@
  * Plugin Name: HysterYale Promos Integration
  * Plugin URI: https://hysteryale.com/
  * Description: WP HysterYale Promos Plugin
- * Version: 0.1
+ * Version: 0.2.1
  * Author: WebFX
  * Author URI: https://webfx.com/
  * GitHub Plugin URI: jhipwell6/wp-hysteryale-promos
@@ -23,7 +23,7 @@ if ( ! class_exists( 'WP_HYG_Promos' ) ) :
 		/**
 		 * @var string
 		 */
-		public $version = '0.1';
+		public $version = '0.2.1';
 
 		/**
 		 * @var string
@@ -175,8 +175,13 @@ if ( ! class_exists( 'WP_HYG_Promos' ) ) :
 		 */
 		public function init_hooks()
 		{
-			$this->api = new \WP_HYG_Promos\Controllers\HYG_Promos_API( 'promo' );
+			add_action( 'init', array( $this, 'init_rest_api' ), 10 );
 			add_action( 'rest_api_init', array( $this, 'init_rest_api_routes' ), 10, 1 );
+		}
+		
+		public function init_rest_api()
+		{
+			$this->api = new \WP_HYG_Promos\Controllers\HYG_Promos_API( 'promo' );
 		}
 
 		public function init_rest_api_routes( $wp_rest_server )
