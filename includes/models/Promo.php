@@ -123,8 +123,11 @@ class Promo extends Post_Model
 	 * Helpers
 	 */
 	
-	public function draft()
+	public function expire()
 	{
-		
+		return wp_update_post( [
+			'ID' => $this->get_id(),
+			'post_status' => 'draft',
+		] );
 	}
 }

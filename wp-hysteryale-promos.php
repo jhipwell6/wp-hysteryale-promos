@@ -4,7 +4,7 @@
  * Plugin Name: HysterYale Promos Integration
  * Plugin URI: https://hysteryale.com/
  * Description: WP HysterYale Promos Plugin
- * Version: 0.2.1
+ * Version: 0.2.2
  * Author: WebFX
  * Author URI: https://webfx.com/
  * GitHub Plugin URI: jhipwell6/wp-hysteryale-promos
@@ -23,7 +23,7 @@ if ( ! class_exists( 'WP_HYG_Promos' ) ) :
 		/**
 		 * @var string
 		 */
-		public $version = '0.2.1';
+		public $version = '0.2.2';
 
 		/**
 		 * @var string
@@ -76,7 +76,7 @@ if ( ! class_exists( 'WP_HYG_Promos' ) ) :
 			/**
 			 * Once plugins are loaded, initialize
 			 */
-			add_action( 'plugins_loaded', array( $this, 'setup' ), -15 );
+			add_action( 'plugins_loaded', [ $this, 'setup' ], -15 );
 		}
 
 		/**
@@ -175,8 +175,8 @@ if ( ! class_exists( 'WP_HYG_Promos' ) ) :
 		 */
 		public function init_hooks()
 		{
-			add_action( 'init', array( $this, 'init_rest_api' ), 10 );
-			add_action( 'rest_api_init', array( $this, 'init_rest_api_routes' ), 10, 1 );
+			add_action( 'init', [ $this, 'init_rest_api' ], 10 );
+			add_action( 'rest_api_init', [ $this, 'init_rest_api_routes' ], 10, 1 );
 		}
 		
 		public function init_rest_api()
@@ -229,7 +229,7 @@ if ( ! class_exists( 'WP_HYG_Promos' ) ) :
 		/**
 		 * Load the view
 		 */
-		public function view( $template, $data = array() )
+		public function view( $template, $data = [] )
 		{
 			if ( ! empty( $data ) ) {
 				extract( $data );

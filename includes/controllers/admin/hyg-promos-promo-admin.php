@@ -16,7 +16,7 @@ class HYG_Promos_Promo_Admin
 
 	public function __construct()
 	{
-		add_action( 'admin_menu', array( $this, 'add_menu' ), 1 );
+		add_action( 'admin_menu', [ $this, 'add_menu' ], 1 );
 	}
 
 	public static function instance()
@@ -35,7 +35,7 @@ class HYG_Promos_Promo_Admin
 			'Settings',
 			'manage_options',
 			WP_HYG_PROMOS_TEXT_DOMAIN . '-promo-settings',
-			array( $this, 'load_admin_template' )
+			[ $this, 'load_admin_template' ]
 		);
 	}
 

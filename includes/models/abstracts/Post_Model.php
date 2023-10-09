@@ -208,7 +208,7 @@ abstract class Post_Model
 
 	public function get_property_keys()
 	{
-		return array_keys( $this->to_array() );
+		return array_keys( $this->to_[] );
 	}
 
 	protected function get_getter( $prop )
@@ -221,7 +221,7 @@ abstract class Post_Model
 		return is_callable( array( $this, 'map_property' ) ) ? 'set_' . $this->map_property( $prop ) : 'set_' . $prop;
 	}
 
-	protected function set_prop( $prop, $value, $allowed_keys = array() )
+	protected function set_prop( $prop, $value, $allowed_keys = [] )
 	{
 		if ( $this->has_prop( $prop ) || array_key_exists( $prop, $this->get_aliases() ) ) {
 			if ( ! empty( $allowed_keys ) ) {
@@ -258,7 +258,7 @@ abstract class Post_Model
 		}
 	}
 
-	public function save( $args = array() )
+	public function save( $args = [] )
 	{
 		if ( $this->exists ) {
 			// update
@@ -269,7 +269,7 @@ abstract class Post_Model
 		}
 	}
 
-	public function create( $args = array() )
+	public function create( $args = [] )
 	{
 		if ( ! $this->should_create() ) {
 			return $this;
@@ -306,7 +306,7 @@ abstract class Post_Model
 			throw new \Exception( 'Invalid post ID returned' );
 		}
 
-		$data = $this->to_array();
+		$data = $this->to_[];
 
 		$instance = new static( $post_id );
 		$instance->set_props( $data );
@@ -480,7 +480,7 @@ abstract class Post_Model
 		return in_array( $prop, array_values( $this->get_wp_props() ) );
 	}
 
-	private function sanitize_array( $arr = array(), $allowed_keys = array() )
+	private function sanitize_array( $arr = [], $allowed_keys = [] )
 	{
 		if ( empty( $arr ) ) {
 			return $arr;
@@ -496,7 +496,7 @@ abstract class Post_Model
 		return strtolower( preg_replace( array( '/([a-z\d])([A-Z])/', '/([^_])([A-Z][a-z])/' ), '$1_$2', $string ) );
 	}
 
-	private function get_allowed_data( $arr, $allowed_keys = array() )
+	private function get_allowed_data( $arr, $allowed_keys = [] )
 	{
 		if ( empty( $arr ) ) {
 			return $arr;
@@ -506,7 +506,7 @@ abstract class Post_Model
 			return array_intersect_key( $arr, array_flip( $allowed_keys ) );
 		}
 
-		$new_arr = array();
+		$new_arr = [];
 		foreach ( $arr as $nested_arr ) {
 			$new_arr[] = $this->get_allowed_data( $nested_arr, $allowed_keys );
 		}
@@ -596,7 +596,7 @@ abstract class Post_Model
 		return array_values( get_post_stati( array( 'exclude_from_search' => false ) ) );
 	}
 	
-	public function to_array( $exclude = array() )
+	public function to_array( $exclude = [] )
 	{
 		$exclusions = wp_parse_args( $exclude, $this->get_hidden() );
 		$vars = get_object_vars( $this );
@@ -604,15 +604,15 @@ abstract class Post_Model
 		return array_diff_key( $vars, array_flip( $exclusions ) );
 	}
 
-	public function to_json( $exclude = array(), $flags = 0 )
+	public function to_json( $exclude = [], $flags = 0 )
 	{
 		return wp_json_encode( $this->to_array( $exclude ), $flags );
 	}
 
-	public function to_csv_array( $include = array() )
+	public function to_csv_array( $include = [] )
 	{
 		$include = empty( $include ) ? $this->get_property_keys() : $include;
-		$arr = $this->to_array();
+		$arr = $this->to_[];
 		return array_map( function ( $key ) use ( $arr ) {
 			return is_array( $arr[$key] ) ? $this->deep_implode( '|', $arr[$key] ) : (string) $arr[$key];
 		}, $include );
@@ -623,7 +623,7 @@ abstract class Post_Model
 		if ( is_array( $value ) ) {
 			foreach ( $value as $k => $v ) {
 				if ( is_object( $v ) ) {
-					$value[$k] = $v->to_array();
+					$value[$k] = $v->to_[];
 				}
 			}
 		}
