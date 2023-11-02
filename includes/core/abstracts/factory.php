@@ -194,7 +194,7 @@ abstract class Factory implements ArrayAccess, Countable, IteratorAggregate
 		return $this;
 	}
 
-	public function offsetSet( $offset, $value )
+	public function offsetSet( $offset, $value ): void
 	{
 		if ( is_null( $offset ) ) {
 			$this->items[] = $value;
@@ -203,17 +203,17 @@ abstract class Factory implements ArrayAccess, Countable, IteratorAggregate
 		}
 	}
 
-	public function offsetExists( $offset )
+	public function offsetExists( $offset ): bool
 	{
 		return isset( $this->items[$offset] );
 	}
 
-	public function offsetUnset( $offset )
+	public function offsetUnset( $offset ): void
 	{
 		unset( $this->items[$offset] );
 	}
 
-	public function offsetGet( $offset )
+	public function offsetGet( $offset ): mixed
 	{
 		return isset( $this->items[$offset] ) ? $this->items[$offset] : null;
 	}

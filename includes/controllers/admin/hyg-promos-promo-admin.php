@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) )
 class HYG_Promos_Promo_Admin
 {
 
-	use \WP_MVC\Traits\Cacheable_Trait;
+	use \WP_HYG_Promos\Traits\Cacheable_Trait;
 	protected static $instance;
 
 	const API_URL = 'https://hygmarketing.wpengine.com/wp-json/hyg/v1/promos';
