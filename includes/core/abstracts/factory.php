@@ -6,6 +6,7 @@ use \ArrayAccess;
 use \Countable;
 use \IteratorAggregate;
 use \Traversable;
+use \ArrayIterator;
 
 if ( ! defined( 'ABSPATH' ) )
 	exit;
