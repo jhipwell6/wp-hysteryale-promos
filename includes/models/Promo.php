@@ -25,9 +25,11 @@ class Promo extends Post_Model
 	protected $title;
 	protected $description;
 	protected $date;
+	protected $image;
 	protected $promo_id;
 	protected $embed_code;
 	protected $expiration;
+	private $url;
 	
 	/*
 	 * Getters
@@ -47,6 +49,20 @@ class Promo extends Post_Model
 	{
 		return $this->get_post_date( $format );
 	}
+	
+	public function get_image()
+	{
+		if ( null === $this->image ) {
+			$post_thumbnail_id = get_post_thumbnail_id( $this->get_id() );
+			$this->image = wp_get_attachment_image_url( $post_thumbnail_id, 'full' );
+		}
+		return $this->image;
+	}
+	
+	public function has_image()
+	{
+		return (bool) $this->get_image();
+	}
 
 	public function get_promo_id()
 	{
@@ -61,6 +77,14 @@ class Promo extends Post_Model
 	public function get_expiration()
 	{
 		return $this->get_prop( 'expiration' );
+	}
+	
+	public function get_url()
+	{
+		if ( null === $this->url ) {
+			$this->url = get_permalink( $this->get_id() );
+		}
+		return $this->url;
 	}
 	
 	/*
@@ -80,6 +104,11 @@ class Promo extends Post_Model
 	public function set_date( $value, $format = 'Y-m-d h:i:s' )
 	{
 		return $this->set_prop( 'date', $this->to_datetime( $value, $format ) );
+	}
+	
+	public function set_image( $value )
+	{
+		return $this->set_prop( 'image', $value );
 	}
 	
 	public function set_promo_id( $value )
@@ -119,6 +148,12 @@ class Promo extends Post_Model
 		return $this->save_post_date( $this->to_datetime( $value ), $return_format );
 	}
 	
+	public function save_image_meta( $value )
+	{
+		$image_id = $this->process_image( 'image', $value );
+		return set_post_thumbnail( $this->get_id(), $image_id );
+	}
+	
 	/*
 	 * Helpers
 	 */
@@ -129,5 +164,14 @@ class Promo extends Post_Model
 			'ID' => $this->get_id(),
 			'post_status' => 'draft',
 		] );
+	}
+	
+	private function process_image( $prop, $value )
+	{
+		$image = WP_HYG_Promos()->Media()->get_image_from_library_by_url( $value );
+		if ( ! $image ) {
+			$image = WP_HYG_Promos()->Media()->sideload_image( $value, 0, null, 'id' );
+		}
+		return is_object( $image ) ? $image->ID : $image;
 	}
 }

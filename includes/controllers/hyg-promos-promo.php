@@ -14,6 +14,8 @@ class HYG_Promos_Promo
 		add_action( 'init', [ $this, 'add_promo_expiration_schedule' ], 10 );
 		add_action( 'hyg_promos_expire_promos', [ $this, 'maybe_expire_promos' ], 10 );
 		add_shortcode( 'hyg_promo_embed', [ $this, 'promo_embed_shortcode' ], 10, 1 );
+		add_shortcode( 'hyg_promo_banner', [ $this, 'promo_banner_shortcode' ], 10, 1 );
+		add_shortcode( 'hyg_promo_slider', [ $this, 'promo_slider_shortcode' ], 10, 1 );
 	}
 
 	public static function instance()
@@ -49,7 +51,56 @@ class HYG_Promos_Promo
 		], $atts );
 		
 		$Promo = WP_HYG_Promos()->Promo( $attributes['ID'] );
-		return $Promo->get_embed_code();
+		$embed = $Promo->get_embed_code();
+		return apply_filters( 'hyg_promo_embed_html', $embed, $Promo );
+	}
+	
+	public function promo_banner_shortcode( $atts )
+	{
+		$attributes = shortcode_atts( [
+			'ID' => get_the_ID(),
+		], $atts );
+		
+		$Promo = WP_HYG_Promos()->Promo( $attributes['ID'] );
+		$banner = $Promo->has_image() ? '<a href="' . esc_url( $Promo->get_url() ) . '"><img src="' . esc_url( $Promo->get_image() ) . '" alt="' . esc_attr( $Promo->get_title() ) . '" class="hyg-promo-banner" /></a>' : '';
+		return apply_filters( 'hyg_promo_banner_html', $banner, $Promo );
+	}
+	
+	public function promo_slider_shortcode( $atts )
+	{
+		$attributes = shortcode_atts( [
+			'brand' => '',
+		], $atts );
+		
+		if ( ! $attributes['brand'] ) {
+			return '';
+		}
+		
+		$terms = explode( ',', $attributes['brand'] );
+		
+		$query = new \WP_Query( array(
+			'post_type' => 'promo',
+			'posts_per_page' => -1,
+			'tax_query' => [ [
+				'taxonomy' => 'promo_type',
+				'field' => 'slug',
+				'terms' => $terms,
+			] ],
+			'post_status' => 'publish',
+			'fields' => 'ids',
+		) );
+		
+		if ( $query->have_posts() ) {
+			$promos = array_map( function( $post_id ) {
+				$Promo = WP_HYG_Promos()->Promo( $post_id );
+				return $Promo;
+			}, $query->posts );
+			
+			$slider = WP_HYG_Promos()->view( 'promo-slider', [ 'promos' => $promos ] );
+			return apply_filters( 'hyg_promo_slider_html', $slider, $promos );
+		}
+		
+		return '';
 	}
 	
 	private function get_promos_to_expire()
