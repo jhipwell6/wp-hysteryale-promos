@@ -17,6 +17,9 @@ class HYG_Promos_Promo_Admin
 	public function __construct()
 	{
 		add_action( 'admin_menu', [ $this, 'add_menu' ], 1 );
+		add_action( 'admin_head-edit.php', [ $this, 'add_action_buttons' ] );
+		add_action( 'admin_init', [ $this, 'sync_images' ] );
+		add_action( 'admin_notices', [ $this, 'add_sync_images_notice' ] );
 	}
 
 	public static function instance()
@@ -37,6 +40,59 @@ class HYG_Promos_Promo_Admin
 			WP_HYG_PROMOS_TEXT_DOMAIN . '-promo-settings',
 			[ $this, 'load_admin_template' ]
 		);
+	}
+	
+	public function add_action_buttons()
+	{
+		if ( $this->is_this_post_type_screen() ) {
+			$sync_images_url = add_query_arg( [
+				'sync_images' => 1,
+			] );
+			ob_start();
+			?>
+			<a id="<?php echo WP_HYG_PROMOS_TEXT_DOMAIN . '-sync-images' ?>" class="page-title-action" href="<?php echo $sync_images_url; ?>">Sync Images</a>
+			<?php
+			$output = ob_get_clean();
+			?>
+			<script type="text/javascript">
+				( function ( $ ) {
+					$( document ).ready( () => {
+						$( 'hr.wp-header-end' ).before( '<?php echo str_replace( array( "\r", "\n", "\t" ), '', $output ); ?>' );
+					} )
+				}( jQuery ) );
+			</script>
+			<?php
+		}
+	}
+	
+	public function sync_images()
+	{
+		$do_sync = filter_input( INPUT_GET, 'sync_images' );
+		if ( $this->is_this_post_type_screen() && $do_sync ) {
+			$available_promos = $this->get_available_promos( true );
+			$active_promo_ids = $this->get_active_promo_ids();
+			$active_promos = array_filter( $available_promos, function( $promo ) use ( $active_promo_ids ) {
+				return in_array( $promo['id'], $active_promo_ids );
+			} );
+			
+			$Empty_Promo = WP_HYG_Promos()->Promo();
+			foreach ( $active_promos as $promo ) {
+				$Promo = $Empty_Promo->get_by_unique_key( $promo['id'] );
+				$Promo->update_prop( 'image', $promo['image'] );
+			}
+		}
+	}
+	
+	public function add_sync_images_notice()
+	{
+		$do_sync = filter_input( INPUT_GET, 'sync_images' );
+		if ( $this->is_this_post_type_screen() && $do_sync ) {
+			?>
+			<div class="notice notice-success is-dismissible">
+				<p><?php _e( 'Promo images synced!', WP_HYG_PROMOS_TEXT_DOMAIN ); ?></p>
+			</div>
+			<?php
+		}
 	}
 
 	public function load_admin_template()
@@ -84,6 +140,15 @@ class HYG_Promos_Promo_Admin
 		return [];
 	}
 	
+	private function get_active_promos()
+	{
+		
+		
+		return array_map( function( $promo ) {
+			
+		}, $active_promos );
+	}
+	
 	private function get_active_promo_ids()
 	{
 		$query = new \WP_Query( [
@@ -105,6 +170,11 @@ class HYG_Promos_Promo_Admin
 		return ( is_admin() && $current_screen->id == 'promo_page_wp-hyg-promos-promo-settings' && isset( $_GET[$action] ) );
 	}
 
+	private function is_this_post_type_screen()
+	{
+		global $pagenow;
+		return ( 'edit.php' == $pagenow && isset( $_GET['post_type'] ) && 'promo' == $_GET['post_type'] ) ? true : false;
+	}
 }
 
 HYG_Promos_Promo_Admin::instance();
