@@ -47,10 +47,10 @@ class HYG_Promos_Promo
 	public function promo_embed_shortcode( $atts )
 	{
 		$attributes = shortcode_atts( [
-			'ID' => get_the_ID(),
+			'id' => get_the_ID(),
 		], $atts );
 		
-		$Promo = WP_HYG_Promos()->Promo( $attributes['ID'] );
+		$Promo = WP_HYG_Promos()->Promo( $attributes['id'] );
 		$embed = $Promo->get_embed_code();
 		return apply_filters( 'hyg_promo_embed_html', $embed, $Promo );
 	}
@@ -58,11 +58,12 @@ class HYG_Promos_Promo
 	public function promo_banner_shortcode( $atts )
 	{
 		$attributes = shortcode_atts( [
-			'ID' => get_the_ID(),
+			'id' => get_the_ID(),
 		], $atts );
 		
-		$Promo = WP_HYG_Promos()->Promo( $attributes['ID'] );
-		$banner = $Promo->has_image() ? '<a href="' . esc_url( $Promo->get_url() ) . '"><img src="' . esc_url( $Promo->get_image() ) . '" alt="' . esc_attr( $Promo->get_title() ) . '" class="hyg-promo-banner" /></a>' : '';
+		$Promo = WP_HYG_Promos()->Promo( $attributes['id'] );
+		$banner = is_object( $Promo ) && $Promo->has_image() ? '<a href="' . esc_url( $Promo->get_url() ) . '"><img src="' . esc_url( $Promo->get_image() ) . '" alt="' . esc_attr( $Promo->get_title() ) . '" class="hyg-promo-banner" /></a>' : '';
+		
 		return apply_filters( 'hyg_promo_banner_html', $banner, $Promo );
 	}
 	
@@ -97,6 +98,7 @@ class HYG_Promos_Promo
 			}, $query->posts );
 			
 			$slider = WP_HYG_Promos()->view( 'promo-slider', [ 'promos' => $promos ] );
+			wp_reset_query();
 			return apply_filters( 'hyg_promo_slider_html', $slider, $promos );
 		}
 		
