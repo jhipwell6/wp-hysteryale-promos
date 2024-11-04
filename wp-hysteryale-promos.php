@@ -4,7 +4,7 @@
  * Plugin Name: HysterYale Promos Integration
  * Plugin URI: https://hysteryale.com/
  * Description: WP HysterYale Promos Plugin
- * Version: 0.5
+ * Version: 0.6
  * Author: WebFX
  * Author URI: https://webfx.com/
  * GitHub Plugin URI: jhipwell6/wp-hysteryale-promos
@@ -23,7 +23,7 @@ if ( ! class_exists( 'WP_HYG_Promos' ) ) :
 		/**
 		 * @var string
 		 */
-		public $version = '0.5';
+		public $version = '0.6';
 
 		/**
 		 * @var string
